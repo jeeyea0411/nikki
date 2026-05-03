@@ -393,6 +393,289 @@
   }
   .empty-state .big { font-size: 32px; margin-bottom: 8px; }
 
+  /* ── 달력 ── */
+  .cal-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .cal-month-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .cal-nav-btn {
+    background: var(--paper);
+    border: 1px solid var(--paper3);
+    border-radius: 10px;
+    width: 36px; height: 36px;
+    font-size: 20px;
+    color: var(--ink-muted);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .cal-nav-btn:active { transform: scale(0.93); background: var(--paper3); }
+  .cal-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: 11px;
+    color: var(--ink-faint);
+    font-weight: 500;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--paper3);
+    margin-bottom: 8px;
+  }
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+  }
+  .cal-cell {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.15s;
+    padding: 2px 0;
+  }
+  .cal-cell:active { transform: scale(0.92); }
+  .cal-cell.empty { pointer-events: none; }
+  .cal-cell.today .cal-day-num {
+    background: var(--accent);
+    color: white;
+    border-radius: 50%;
+    width: 26px; height: 26px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .cal-cell.selected {
+    background: var(--accent-light);
+    border: 1px solid var(--accent);
+  }
+  .cal-cell.has-record .cal-day-num { font-weight: 500; color: var(--ink); }
+  .cal-day-num {
+    font-size: 13px;
+    color: var(--ink-muted);
+    line-height: 1;
+    margin-bottom: 3px;
+  }
+  .cal-avg-bar {
+    width: 22px;
+    height: 4px;
+    border-radius: 2px;
+    min-height: 4px;
+  }
+  .cal-avg-num {
+    font-size: 9px;
+    font-weight: 500;
+    line-height: 1;
+    margin-top: 1px;
+  }
+  .cal-avg-low  { background: #4a7c6f; }
+  .cal-avg-mid  { background: #c08030; }
+  .cal-avg-high { background: #b85c38; }
+  .cal-avg-text-low  { color: #4a7c6f; }
+  .cal-avg-text-mid  { color: #c08030; }
+  .cal-avg-text-high { color: #b85c38; }
+  .cal-count-badge {
+    font-size: 9px;
+    color: var(--ink-faint);
+    line-height: 1;
+  }
+  .cal-detail-header {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+    margin: 16px 0 4px;
+    padding-left: 2px;
+  }
+  .cal-detail-summary {
+    font-size: 12px;
+    color: var(--ink-muted);
+    margin-bottom: 12px;
+    padding-left: 2px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .cal-summary-chip {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 2px 9px;
+    border-radius: 10px;
+  }
+  .cal-timeline {
+    position: relative;
+    padding-left: 28px;
+  }
+  .cal-timeline::before {
+    content: '';
+    position: absolute;
+    left: 9px;
+    top: 6px;
+    bottom: 6px;
+    width: 1px;
+    background: var(--paper3);
+  }
+  .cal-timeline-item {
+    position: relative;
+    margin-bottom: 10px;
+  }
+  .cal-timeline-dot {
+    position: absolute;
+    left: -23px;
+    top: 14px;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    border: 2px solid var(--paper);
+    z-index: 1;
+  }
+  .cal-legend {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--paper3);
+  }
+  .cal-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: var(--ink-faint);
+  }
+  .cal-legend-bar {
+    width: 14px; height: 4px;
+    border-radius: 2px;
+  }
+
+  /* ── 복식호흡 ── */
+  .breath-intro {
+    text-align: center;
+    font-size: 13px;
+    color: var(--ink-muted);
+    line-height: 1.8;
+    margin-bottom: 14px;
+    padding: 4px 8px;
+  }
+  .breath-card { text-align: center; }
+  .breath-circle-wrap {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 20px;
+  }
+  .breath-svg { width: 200px; height: 200px; transform: rotate(-90deg); }
+  .breath-track {
+    fill: none;
+    stroke: var(--paper3);
+    stroke-width: 6;
+  }
+  .breath-progress {
+    fill: none;
+    stroke: var(--calm);
+    stroke-width: 6;
+    stroke-linecap: round;
+    stroke-dasharray: 502;
+    stroke-dashoffset: 502;
+    transition: stroke-dashoffset 1s linear, stroke 0.4s ease;
+  }
+  .breath-inner {
+    fill: var(--calm-light);
+    transition: r 1s ease, fill 0.4s ease;
+  }
+  .breath-center {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none;
+  }
+  .breath-phase-text {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+  .breath-count-text {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--calm);
+    font-family: 'Noto Serif KR', serif;
+    margin-top: 2px;
+    line-height: 1;
+  }
+  .breath-cycle-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  .cycle-step {
+    font-size: 12px;
+    color: var(--ink-muted);
+  }
+  .cycle-step span { font-weight: 500; color: var(--ink); }
+  .inhale-step span { color: var(--calm); }
+  .hold-step span { color: var(--accent); }
+  .exhale-step span { color: #6a7fc1; }
+  .cycle-dot { color: var(--ink-faint); font-size: 16px; }
+  .breath-rounds-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .breath-rounds-val {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--calm);
+    line-height: 1;
+  }
+  .btn-breath-start {
+    flex: 1;
+    padding: 13px;
+    background: var(--calm);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    font-weight: 500;
+    font-family: 'Noto Sans KR', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-breath-start:active { transform: scale(0.97); }
+  .btn-breath-start.running {
+    background: var(--warn-light);
+    color: var(--warn);
+    border: 1px solid var(--warn);
+  }
+  .btn-breath-reset {
+    padding: 13px 18px;
+    background: var(--paper2);
+    color: var(--ink-muted);
+    border: 1px solid var(--paper3);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-family: 'Noto Sans KR', sans-serif;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-breath-reset:active { transform: scale(0.96); }
+
   /* ── 토스트 ── */
   .toast {
     position: fixed;
@@ -448,7 +731,9 @@
   <!-- 탭 -->
   <div class="tabs">
     <div class="tab active" id="tab-record" onclick="showTab('record')">기록하기</div>
-    <div class="tab" id="tab-history" onclick="showTab('history')">지난 기록</div>
+    <div class="tab" id="tab-breath" onclick="showTab('breath')">복식호흡</div>
+    <div class="tab" id="tab-calendar" onclick="showTab('calendar')">달력</div>
+    <div class="tab" id="tab-history" onclick="showTab('history')">기록 목록</div>
   </div>
 
   <!-- 기록하기 탭 -->
@@ -524,6 +809,74 @@
     <div style="height: 80px;"></div>
   </div>
 
+  <!-- 복식호흡 탭 -->
+  <div class="scroll-area" id="view-breath" style="display:none;">
+    <div class="breath-intro">
+      <p>4초 들이쉬고 · 3초 멈추고 · 5초 내쉬는<br>복식호흡으로 불안을 가라앉혀 보세요.</p>
+    </div>
+
+    <div class="card breath-card">
+      <!-- SVG 원형 애니메이션 -->
+      <div class="breath-circle-wrap">
+        <svg class="breath-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <circle class="breath-track" cx="100" cy="100" r="80" />
+          <circle class="breath-progress" id="breath-arc" cx="100" cy="100" r="80" />
+          <circle class="breath-inner" id="breath-inner-circle" cx="100" cy="100" r="54" />
+        </svg>
+        <div class="breath-center">
+          <div class="breath-phase-text" id="breath-phase">준비</div>
+          <div class="breath-count-text" id="breath-count">--</div>
+        </div>
+      </div>
+
+      <div class="breath-cycle-info">
+        <div class="cycle-step inhale-step">들이쉬기 <span>4초</span></div>
+        <div class="cycle-dot">·</div>
+        <div class="cycle-step hold-step">멈추기 <span>3초</span></div>
+        <div class="cycle-dot">·</div>
+        <div class="cycle-step exhale-step">내쉬기 <span>5초</span></div>
+      </div>
+    </div>
+
+    <div class="card" style="text-align:center;">
+      <div class="breath-rounds-row">
+        <span class="card-label" style="margin:0;">완료한 횟수</span>
+        <span class="breath-rounds-val" id="breath-rounds">0</span>
+        <span class="card-label" style="margin:0;">회</span>
+      </div>
+      <div style="display:flex; gap:10px; margin-top:14px;">
+        <button class="btn-breath-start" id="breath-start-btn" onclick="toggleBreath()">시작하기</button>
+        <button class="btn-breath-reset" onclick="resetBreath()">초기화</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 달력 탭 -->
+  <div class="scroll-area" id="view-calendar" style="display:none;">
+    <div class="cal-nav">
+      <button class="cal-nav-btn" onclick="calPrevMonth()">&#8249;</button>
+      <div class="cal-month-title" id="cal-month-title"></div>
+      <button class="cal-nav-btn" onclick="calNextMonth()">&#8250;</button>
+    </div>
+
+    <div class="card" style="padding: 14px 10px;">
+      <div class="cal-weekdays">
+        <div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+    </div>
+
+    <!-- 선택된 날짜 기록 -->
+    <div id="cal-day-detail" style="display:none;">
+      <div class="cal-detail-header" id="cal-detail-header"></div>
+      <div class="cal-detail-summary" id="cal-detail-summary"></div>
+      <div class="cal-timeline" id="cal-detail-records"></div>
+    </div>
+    <div id="cal-empty-day" style="display:none;">
+      <div class="empty-state" style="padding: 24px;">기록이 없는 날이에요.</div>
+    </div>
+  </div>
+
   <!-- 지난 기록 탭 -->
   <div class="scroll-area" id="view-history" style="display:none;">
     <div class="history-header">
@@ -587,13 +940,173 @@ function checkSetup() {
 
 // ── 탭 전환 ──
 function showTab(tab) {
-  const isRecord = tab === 'record';
-  document.getElementById('view-record').style.display = isRecord ? 'block' : 'none';
-  document.getElementById('view-history').style.display = isRecord ? 'none' : 'block';
-  document.getElementById('tab-record').className = 'tab' + (isRecord ? ' active' : '');
-  document.getElementById('tab-history').className = 'tab' + (!isRecord ? ' active' : '');
-  document.getElementById('save-btn').style.display = isRecord ? 'flex' : 'none';
-  if (!isRecord) renderHistory();
+  ['record','breath','calendar','history'].forEach(t => {
+    const view = document.getElementById('view-' + t);
+    if (view) view.style.display = t === tab ? 'block' : 'none';
+    const el = document.getElementById('tab-' + t);
+    if (el) el.className = 'tab' + (t === tab ? ' active' : '');
+  });
+  document.getElementById('save-btn').style.display = tab === 'record' ? 'flex' : 'none';
+  if (tab === 'history') renderHistory();
+  if (tab === 'calendar') renderCalendar();
+  if (tab !== 'breath') pauseBreath();
+}
+
+// ── 달력 ──
+let calYear = new Date().getFullYear();
+let calMonth = new Date().getMonth(); // 0-indexed
+let calSelectedDate = null; // 'YYYY-MM-DD'
+
+function calPrevMonth() {
+  calMonth--;
+  if (calMonth < 0) { calMonth = 11; calYear--; }
+  calSelectedDate = null;
+  renderCalendar();
+}
+function calNextMonth() {
+  calMonth++;
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  calSelectedDate = null;
+  renderCalendar();
+}
+
+function getRecordsByDate() {
+  const map = {};
+  records.forEach(r => {
+    const dateKey = parseRecordDate(r);
+    if (!dateKey) return;
+    if (!map[dateKey]) map[dateKey] = [];
+    map[dateKey].push(r);
+  });
+  return map;
+}
+
+function parseRecordDate(r) {
+  // r.id는 Date.now() — 이걸로 날짜 파싱
+  if (!r.id) return null;
+  const d = new Date(r.id);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+function renderCalendar() {
+  const byDate = getRecordsByDate();
+  const today = new Date();
+  const todayKey = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+
+  const monthNames = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+  document.getElementById('cal-month-title').textContent = `${calYear}년 ${monthNames[calMonth]}`;
+
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+
+  let html = '';
+  for (let i = 0; i < firstDay; i++) {
+    html += `<div class="cal-cell empty"></div>`;
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const key = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dayRecords = byDate[key] || [];
+    const hasRecord = dayRecords.length > 0;
+    const isToday = key === todayKey;
+    const isSelected = key === calSelectedDate;
+
+    let indicator = '';
+    if (hasRecord) {
+      const avg = Math.round(dayRecords.reduce((s, r) => s + r.anxiety, 0) / dayRecords.length);
+      const lvl = avg <= 3 ? 'low' : avg <= 6 ? 'mid' : 'high';
+      const cnt = dayRecords.length > 1 ? `<div class="cal-count-badge">${dayRecords.length}회</div>` : '';
+      indicator = `<div class="cal-avg-bar cal-avg-${lvl}"></div>
+                   <div class="cal-avg-num cal-avg-text-${lvl}">${avg}</div>
+                   ${cnt}`;
+    } else {
+      indicator = `<div style="min-height:18px;"></div>`;
+    }
+
+    html += `<div class="cal-cell${hasRecord ? ' has-record' : ''}${isToday ? ' today' : ''}${isSelected ? ' selected' : ''}"
+      onclick="selectCalDay('${key}')">
+      <div class="cal-day-num">${d}</div>
+      ${indicator}
+    </div>`;
+  }
+
+  document.getElementById('cal-grid').innerHTML = html;
+
+  // 범례
+  if (!document.querySelector('.cal-legend')) {
+    const card = document.querySelector('#view-calendar .card');
+    card.insertAdjacentHTML('beforeend', `
+      <div class="cal-legend">
+        <div class="cal-legend-item"><div class="cal-legend-bar cal-avg-low"></div> 낮음 0–3</div>
+        <div class="cal-legend-item"><div class="cal-legend-bar cal-avg-mid"></div> 보통 4–6</div>
+        <div class="cal-legend-item"><div class="cal-legend-bar cal-avg-high"></div> 높음 7–10</div>
+      </div>`);
+  }
+
+  if (calSelectedDate) renderCalDayDetail(calSelectedDate, byDate);
+}
+
+function selectCalDay(key) {
+  calSelectedDate = key;
+  renderCalendar();
+  // 선택 후 detail로 스크롤
+  setTimeout(() => {
+    const el = document.getElementById('cal-day-detail') || document.getElementById('cal-empty-day');
+    if (el && el.style.display !== 'none') el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 50);
+}
+
+function renderCalDayDetail(key, byDate) {
+  const dayRecords = (byDate[key] || []).slice().sort((a, b) => a.id - b.id); // 시간 오름차순
+  const [, m, d] = key.split('-');
+  document.getElementById('cal-detail-header').textContent = `${parseInt(m)}월 ${parseInt(d)}일`;
+
+  if (dayRecords.length === 0) {
+    document.getElementById('cal-day-detail').style.display = 'none';
+    document.getElementById('cal-empty-day').style.display = 'block';
+    return;
+  }
+
+  document.getElementById('cal-empty-day').style.display = 'none';
+  document.getElementById('cal-day-detail').style.display = 'block';
+
+  // 요약: 기록 수 + 평균 불안도
+  const avg = Math.round(dayRecords.reduce((s, r) => s + r.anxiety, 0) / dayRecords.length);
+  const avgLvl = avg <= 3 ? 'anxiety-low' : avg <= 6 ? 'anxiety-mid' : 'anxiety-high';
+  document.getElementById('cal-detail-summary').innerHTML =
+    `<span>${dayRecords.length}회 기록</span>
+     <span class="anxiety-chip ${avgLvl} cal-summary-chip">평균 불안 ${avg}/10</span>`;
+
+  // 타임라인
+  document.getElementById('cal-detail-records').innerHTML = dayRecords.map(r => {
+    const v = r.anxiety;
+    const lvl = v <= 3 ? 'low' : v <= 6 ? 'mid' : 'high';
+    const dotColor = lvl === 'low' ? '#4a7c6f' : lvl === 'mid' ? '#c08030' : '#b85c38';
+    const chipCls = v <= 3 ? 'anxiety-low' : v <= 6 ? 'anxiety-mid' : 'anxiety-high';
+    const tags = [...(r.emotions||[]), ...(r.symptoms||[])]
+      .map(t => `<span class="record-tag">${t}</span>`).join('');
+    const dur = r.timerSeconds > 0
+      ? `⏱ ${Math.floor(r.timerSeconds/60)}분 ${r.timerSeconds%60}초` : '';
+    // 시간 부분만 추출
+    const timeMatch = r.time ? r.time.match(/(\d+:\d+)/) : null;
+    const timeOnly = timeMatch ? timeMatch[1] : r.time || '';
+
+    return `<div class="cal-timeline-item">
+      <div class="cal-timeline-dot" style="background:${dotColor};"></div>
+      <div class="record-card" style="margin-bottom:0;">
+        <div class="record-top">
+          <span class="record-time">${timeOnly}</span>
+          <span class="anxiety-chip ${chipCls}">불안 ${r.anxiety}/10</span>
+        </div>
+        ${tags ? `<div class="record-tags">${tags}</div>` : ''}
+        ${r.memo ? `<div class="record-note">${r.memo}</div>` : ''}
+        ${dur ? `<div class="record-duration">${dur}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
 }
 
 // ── 타이머 ──
@@ -753,6 +1266,110 @@ function renderHistory() {
       ${dur ? `<div class="record-duration">${dur}</div>` : ''}
     </div>`;
   }).join('');
+}
+
+// ── 복식호흡 ──
+const BREATH_PHASES = [
+  { name: '들이쉬기', duration: 4, color: '#4a7c6f', innerR: 68, arcColor: '#4a7c6f' },
+  { name: '멈추기',   duration: 3, color: '#8b5e3c', innerR: 68, arcColor: '#8b5e3c' },
+  { name: '내쉬기',   duration: 5, color: '#6a7fc1', innerR: 44, arcColor: '#6a7fc1' },
+];
+const BREATH_TOTAL = 4 + 3 + 5; // 12초 1사이클
+const ARC_CIRCUMFERENCE = 2 * Math.PI * 80; // ≈ 502.65
+
+let breathRunning = false;
+let breathInterval = null;
+let breathPhaseIdx = 0;
+let breathPhaseElapsed = 0; // 현재 단계에서 경과된 초
+let breathTotalElapsed = 0; // 전체 경과 초
+let breathRounds = 0;
+
+function toggleBreath() {
+  if (breathRunning) {
+    pauseBreath();
+  } else {
+    startBreath();
+  }
+}
+
+function startBreath() {
+  breathRunning = true;
+  const btn = document.getElementById('breath-start-btn');
+  btn.textContent = '일시정지';
+  btn.className = 'btn-breath-start running';
+
+  breathInterval = setInterval(() => {
+    breathPhaseElapsed++;
+    breathTotalElapsed++;
+
+    const phase = BREATH_PHASES[breathPhaseIdx];
+    const remaining = phase.duration - breathPhaseElapsed;
+
+    updateBreathUI(phase, remaining);
+
+    if (breathPhaseElapsed >= phase.duration) {
+      breathPhaseIdx = (breathPhaseIdx + 1) % BREATH_PHASES.length;
+      breathPhaseElapsed = 0;
+      if (breathPhaseIdx === 0) {
+        breathRounds++;
+        document.getElementById('breath-rounds').textContent = breathRounds;
+      }
+    }
+  }, 1000);
+
+  // 즉시 첫 프레임 표시
+  const phase = BREATH_PHASES[breathPhaseIdx];
+  updateBreathUI(phase, phase.duration - breathPhaseElapsed);
+}
+
+function pauseBreath() {
+  if (!breathRunning) return;
+  breathRunning = false;
+  clearInterval(breathInterval);
+  const btn = document.getElementById('breath-start-btn');
+  btn.textContent = '계속하기';
+  btn.className = 'btn-breath-start';
+}
+
+function resetBreath() {
+  pauseBreath();
+  breathPhaseIdx = 0;
+  breathPhaseElapsed = 0;
+  breathTotalElapsed = 0;
+  breathRounds = 0;
+  document.getElementById('breath-rounds').textContent = '0';
+  document.getElementById('breath-phase').textContent = '준비';
+  document.getElementById('breath-count').textContent = '--';
+  document.getElementById('breath-start-btn').textContent = '시작하기';
+  document.getElementById('breath-start-btn').className = 'btn-breath-start';
+
+  const arc = document.getElementById('breath-arc');
+  arc.style.strokeDashoffset = ARC_CIRCUMFERENCE;
+  arc.style.stroke = '#4a7c6f';
+
+  const inner = document.getElementById('breath-inner-circle');
+  inner.style.r = '54';
+  inner.style.fill = '#e0efeb';
+}
+
+function updateBreathUI(phase, remaining) {
+  document.getElementById('breath-phase').textContent = phase.name;
+  document.getElementById('breath-count').textContent = remaining;
+
+  // 원호 진행도: 전체 사이클 기준
+  const cycleElapsed = (breathTotalElapsed % BREATH_TOTAL);
+  const progress = cycleElapsed / BREATH_TOTAL;
+  const offset = ARC_CIRCUMFERENCE * (1 - progress);
+  const arc = document.getElementById('breath-arc');
+  arc.style.strokeDashoffset = offset;
+  arc.style.stroke = phase.arcColor;
+
+  // 내부 원 크기 (들이쉴 때 커지고 내쉴 때 작아짐)
+  const inner = document.getElementById('breath-inner-circle');
+  inner.setAttribute('r', phase.innerR);
+  inner.style.fill = phase.name === '들이쉬기' ? '#c8e6de'
+    : phase.name === '멈추기' ? '#f2e8df'
+    : '#dde4f5';
 }
 
 // 초기화
