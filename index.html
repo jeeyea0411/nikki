@@ -737,32 +737,8 @@
   .setup-banner strong { font-weight: 500; }
 </style>
 
-<script>
-(function() {
-  var manifest = {
-    "name": "치료 일기",
-    "short_name": "치료 일기",
-    "description": "공황장애 노출 치료 기록 앱",
-    "start_url": "./",
-    "display": "standalone",
-    "background_color": "#f5f0eb",
-    "theme_color": "#f5f0eb",
-    "orientation": "portrait",
-    "icons": [{
-      "src": document.querySelector('link[rel="icon"]').href,
-      "sizes": "256x256",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }]
-  };
-  var blob = new Blob([JSON.stringify(manifest)], {type: 'application/manifest+json'});
-  var url = URL.createObjectURL(blob);
-  var link = document.createElement('link');
-  link.rel = 'manifest';
-  link.href = url;
-  document.head.appendChild(link);
-})();
-</script>
+
+<link rel="manifest" href="manifest.json">
 </head>
 <body>
 <div class="app">

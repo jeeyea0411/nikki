@@ -1,0 +1,18 @@
+{
+  "name": "치료 일기",
+  "short_name": "치료 일기",
+  "description": "공황장애 노출 치료 기록 앱",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f5f0eb",
+  "theme_color": "#f5f0eb",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
