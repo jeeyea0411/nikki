@@ -393,6 +393,18 @@
     line-height: 2;
   }
   .empty-state .big { font-size: 32px; margin-bottom: 8px; }
+  .delete-record-btn {
+    font-size: 11px;
+    color: var(--ink-faint);
+    cursor: pointer;
+    padding: 3px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--paper3);
+    background: var(--paper2);
+    font-family: 'Noto Sans KR', sans-serif;
+    transition: all 0.15s;
+  }
+  .delete-record-btn:active { transform: scale(0.95); background: var(--warn-light); color: var(--warn); border-color: var(--warn); }
 
   /* ── 달력 ── */
   .cal-nav {
@@ -1269,9 +1281,20 @@ function renderHistory() {
       </div>
       ${tags ? `<div class="record-tags">${tags}</div>` : ''}
       ${r.memo ? `<div class="record-note">${r.memo}</div>` : ''}
-      ${dur ? `<div class="record-duration">${dur}</div>` : ''}
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+        ${dur ? `<span class="record-duration" style="margin:0;">${dur}</span>` : '<span></span>'}
+        <button class="delete-record-btn" onclick="deleteRecord(${r.id})">삭제</button>
+      </div>
     </div>`;
   }).join('');
+}
+
+function deleteRecord(id) {
+  if (!confirm('이 기록을 삭제할까요?')) return;
+  records = records.filter(r => r.id !== id);
+  saveLocalRecords();
+  renderHistory();
+  showToast('기록이 삭제됐어요', '');
 }
 
 // ── 복식호흡 ──
