@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#f5f0eb">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>나의 노출 일지</title>
+<title>나의 노출 치료 일지</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600&family=Noto+Sans+KR:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -57,9 +57,6 @@
     padding: 52px 24px 20px;
     background: var(--paper);
     border-bottom: 1px solid var(--paper3);
-    position: sticky;
-    top: 0;
-    z-index: 10;
   }
   .header-top {
     display: flex;
@@ -96,8 +93,8 @@
     background: var(--paper);
     border-bottom: 1px solid var(--paper3);
     position: sticky;
-    top: 88px;
-    z-index: 9;
+    top: 0;
+    z-index: 10;
   }
   .tab {
     flex: 1;
@@ -242,7 +239,11 @@
     font-family: 'Noto Sans KR', sans-serif;
     transition: all 0.15s;
     user-select: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
   }
+  .pill svg { flex-shrink: 0; }
   .pill:active { transform: scale(0.95); }
   .pill.selected-emotion {
     background: var(--accent-light);
@@ -420,19 +421,23 @@
   .cal-nav-btn:active { transform: scale(0.93); background: var(--paper3); }
   .cal-weekdays {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     text-align: center;
     font-size: 11px;
     color: var(--ink-faint);
     font-weight: 500;
     padding-bottom: 8px;
     border-bottom: 1px solid var(--paper3);
-    margin-bottom: 8px;
+    margin-bottom: 6px;
+  }
+  .cal-weekdays > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .cal-grid {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 2px;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
   }
   .cal-cell {
     aspect-ratio: 1;
@@ -445,6 +450,8 @@
     position: relative;
     transition: background 0.15s;
     padding: 2px 0;
+    overflow: hidden;
+    min-width: 0;
   }
   .cal-cell:active { transform: scale(0.92); }
   .cal-cell.empty { pointer-events: none; }
@@ -452,8 +459,9 @@
     background: var(--accent);
     color: white;
     border-radius: 50%;
-    width: 26px; height: 26px;
+    width: 24px; height: 24px;
     display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
   }
   .cal-cell.selected {
     background: var(--accent-light);
@@ -467,7 +475,7 @@
     margin-bottom: 3px;
   }
   .cal-avg-bar {
-    width: 22px;
+    width: 18px;
     height: 4px;
     border-radius: 2px;
     min-height: 4px;
@@ -721,7 +729,7 @@
   <div class="header">
     <div class="header-top">
       <div>
-        <h1>나의 노출 일지</h1>
+        <h1>나의 노출 치료 일지</h1>
         <p>지금 이 순간을 솔직하게 기록해요</p>
       </div>
       <div class="streak-badge" id="streak-badge">0회 기록</div>
@@ -772,15 +780,15 @@
     <div class="card">
       <div class="card-label">지금 느끼는 감정</div>
       <div class="pill-grid" id="emotions-grid">
-        <button class="pill" onclick="toggleTag(this,'emotion','불안')">😰 불안</button>
-        <button class="pill" onclick="toggleTag(this,'emotion','두려움')">😨 두려움</button>
-        <button class="pill" onclick="toggleTag(this,'emotion','긴장')">😬 긴장</button>
-        <button class="pill" onclick="toggleTag(this,'emotion','초조')">😤 초조</button>
-        <button class="pill" onclick="toggleTag(this,'emotion','답답함')">😮‍💨 답답함</button>
-        <button class="pill" onclick="toggleTag(this,'emotion','무서움')">😱 무서움</button>
-        <button class="pill" onclick="toggleTag(this,'emotion','차분함')">😌 차분함</button>
-        <button class="pill" onclick="toggleTag(this,'emotion','뿌듯함')">😊 뿌듯함</button>
-        <button class="pill" onclick="toggleTag(this,'emotion','모르겠음')">😶 모르겠음</button>
+        <button class="pill" onclick="toggleTag(this,'emotion','불안')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>불안</button>
+        <button class="pill" onclick="toggleTag(this,'emotion','두려움')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>두려움</button>
+        <button class="pill" onclick="toggleTag(this,'emotion','긴장')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>긴장</button>
+        <button class="pill" onclick="toggleTag(this,'emotion','초조')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>초조</button>
+        <button class="pill" onclick="toggleTag(this,'emotion','답답함')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>답답함</button>
+        <button class="pill" onclick="toggleTag(this,'emotion','무서움')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>무서움</button>
+        <button class="pill" onclick="toggleTag(this,'emotion','차분함')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/><line x1="16" y1="8" x2="2" y2="22"/><line x1="17.5" y1="15" x2="9" y2="15"/></svg>차분함</button>
+        <button class="pill" onclick="toggleTag(this,'emotion','뿌듯함')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>뿌듯함</button>
+        <button class="pill" onclick="toggleTag(this,'emotion','모르겠음')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>모르겠음</button>
       </div>
     </div>
 
@@ -788,14 +796,14 @@
     <div class="card">
       <div class="card-label">신체 증상</div>
       <div class="pill-grid" id="symptoms-grid">
-        <button class="pill" onclick="toggleTag(this,'symptom','심장 두근거림')">💓 심장 두근거림</button>
-        <button class="pill" onclick="toggleTag(this,'symptom','호흡 곤란')">🫁 호흡 곤란</button>
-        <button class="pill" onclick="toggleTag(this,'symptom','손발 떨림')">🫳 손발 떨림</button>
-        <button class="pill" onclick="toggleTag(this,'symptom','식은땀')">💧 식은땀</button>
-        <button class="pill" onclick="toggleTag(this,'symptom','어지러움')">🌀 어지러움</button>
-        <button class="pill" onclick="toggleTag(this,'symptom','메스꺼움')">🤢 메스꺼움</button>
-        <button class="pill" onclick="toggleTag(this,'symptom','근육 긴장')">💪 근육 긴장</button>
-        <button class="pill" onclick="toggleTag(this,'symptom','증상 없음')">✅ 증상 없음</button>
+        <button class="pill" onclick="toggleTag(this,'symptom','심장 두근거림')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>심장 두근거림</button>
+        <button class="pill" onclick="toggleTag(this,'symptom','호흡 곤란')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>호흡 곤란</button>
+        <button class="pill" onclick="toggleTag(this,'symptom','손발 떨림')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2h12"/><path d="M22 12h-2a2 2 0 0 0-2 2v2a2 2 0 0 1-2 2H4"/></svg>손발 떨림</button>
+        <button class="pill" onclick="toggleTag(this,'symptom','식은땀')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>식은땀</button>
+        <button class="pill" onclick="toggleTag(this,'symptom','어지러움')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>어지러움</button>
+        <button class="pill" onclick="toggleTag(this,'symptom','메스꺼움')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>메스꺼움</button>
+        <button class="pill" onclick="toggleTag(this,'symptom','근육 긴장')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>근육 긴장</button>
+        <button class="pill" onclick="toggleTag(this,'symptom','증상 없음')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>증상 없음</button>
       </div>
     </div>
 
@@ -859,7 +867,7 @@
       <button class="cal-nav-btn" onclick="calNextMonth()">&#8250;</button>
     </div>
 
-    <div class="card" style="padding: 14px 10px;">
+    <div class="card" style="padding: 14px 14px 10px;">
       <div class="cal-weekdays">
         <div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div>
       </div>
@@ -1170,10 +1178,8 @@ async function saveRecord() {
   const anxiety = parseInt(document.getElementById('anxiety-slider').value);
   const memo = document.getElementById('memo-text').value.trim();
   const now = new Date();
-  const time = now.toLocaleString('ko-KR', {
-    month: 'numeric', day: 'numeric',
-    hour: '2-digit', minute: '2-digit'
-  });
+  const dayNames = ['일','월','화','수','목','금','토'];
+  const time = `${now.getMonth()+1}/${now.getDate()} (${dayNames[now.getDay()]}) ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
 
   const record = {
     id: Date.now(),
