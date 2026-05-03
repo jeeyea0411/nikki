@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#f5f0eb">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>나의 노출 일지</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600&family=Noto+Sans+KR:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ── 기본 리셋 ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html { font-size: 16px; }
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: #f5f0eb;
+    color: #2c2520;
+    min-height: 100dvh;
+    overscroll-behavior: none;
+  }
+
+  /* ── CSS 변수 ── */
+  :root {
+    --ink: #2c2520;
+    --ink-muted: #7a6e68;
+    --ink-faint: #b0a89e;
+    --paper: #faf7f3;
+    --paper2: #f5f0eb;
+    --paper3: #ede7df;
+    --accent: #8b5e3c;
+    --accent-light: #f2e8df;
+    --accent-deep: #5c3d25;
+    --calm: #4a7c6f;
+    --calm-light: #e0efeb;
+    --warn: #b85c38;
+    --warn-light: #f9ece6;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --shadow: 0 1px 3px rgba(44,37,32,0.08);
+    --shadow-md: 0 4px 16px rgba(44,37,32,0.10);
+  }
+
+  /* ── 레이아웃 ── */
+  .app {
+    max-width: 430px;
+    margin: 0 auto;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  /* ── 헤더 ── */
+  .header {
+    padding: 52px 24px 20px;
+    background: var(--paper);
+    border-bottom: 1px solid var(--paper3);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .header h1 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+  .header p {
+    font-size: 12px;
+    color: var(--ink-muted);
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+  .streak-badge {
+    background: var(--accent-light);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+
+  /* ── 탭 ── */
+  .tabs {
+    display: flex;
+    background: var(--paper);
+    border-bottom: 1px solid var(--paper3);
+    position: sticky;
+    top: 88px;
+    z-index: 9;
+  }
+  .tab {
+    flex: 1;
+    padding: 12px 8px;
+    text-align: center;
+    font-size: 14px;
+    color: var(--ink-muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* ── 스크롤 영역 ── */
+  .scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 16px 100px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* ── 카드 ── */
+  .card {
+    background: var(--paper);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(44,37,32,0.06);
+  }
+  .card-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  /* ── 타이머 ── */
+  .timer-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .timer-display {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 36px;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: 3px;
+    line-height: 1;
+  }
+  .timer-btns { display: flex; gap: 8px; }
+  .btn-timer {
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--paper3);
+    background: var(--paper2);
+    font-size: 13px;
+    color: var(--ink);
+    cursor: pointer;
+    font-family: 'Noto Sans KR', sans-serif;
+    transition: all 0.15s;
+  }
+  .btn-timer:active { transform: scale(0.96); }
+  .btn-timer.running {
+    background: var(--warn-light);
+    border-color: var(--warn);
+    color: var(--warn);
+  }
+  .btn-timer.start {
+    background: var(--calm-light);
+    border-color: var(--calm);
+    color: var(--calm);
+    font-weight: 500;
+  }
+
+  /* ── 불안 슬라이더 ── */
+  .anxiety-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 8px;
+  }
+  .anxiety-val {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 32px;
+    font-weight: 600;
+    min-width: 38px;
+    text-align: right;
+    line-height: 1;
+  }
+  .anxiety-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--ink-faint);
+    margin-top: 4px;
+  }
+  input[type=range] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 4px;
+    background: var(--paper3);
+    border-radius: 2px;
+    outline: none;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 2px solid var(--accent);
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(139,94,60,0.3);
+    transition: transform 0.1s;
+  }
+  input[type=range]:active::-webkit-slider-thumb { transform: scale(1.2); }
+
+  /* ── 감정/증상 버튼 ── */
+  .pill-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+  .pill {
+    border: 1px solid var(--paper3);
+    border-radius: 20px;
+    padding: 7px 13px;
+    font-size: 13px;
+    cursor: pointer;
+    background: var(--paper2);
+    color: var(--ink-muted);
+    font-family: 'Noto Sans KR', sans-serif;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .pill:active { transform: scale(0.95); }
+  .pill.selected-emotion {
+    background: var(--accent-light);
+    border-color: var(--accent);
+    color: var(--accent-deep);
+    font-weight: 500;
+  }
+  .pill.selected-symptom {
+    background: var(--warn-light);
+    border-color: var(--warn);
+    color: var(--warn);
+    font-weight: 500;
+  }
+
+  /* ── 텍스트에어리어 ── */
+  textarea {
+    width: 100%;
+    border: 1px solid var(--paper3);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    font-size: 14px;
+    font-family: 'Noto Sans KR', sans-serif;
+    color: var(--ink);
+    background: var(--paper2);
+    resize: none;
+    line-height: 1.7;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  textarea:focus { border-color: var(--accent); background: var(--paper); }
+  textarea::placeholder { color: var(--ink-faint); }
+
+  /* ── 저장 버튼 ── */
+  .save-btn {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 32px);
+    max-width: 398px;
+    padding: 16px;
+    background: var(--accent);
+    color: #faf7f3;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 15px;
+    font-weight: 500;
+    font-family: 'Noto Sans KR', sans-serif;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(139,94,60,0.35);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .save-btn:active { transform: translateX(-50%) scale(0.98); background: var(--accent-deep); }
+  .save-btn:disabled { opacity: 0.55; cursor: default; transform: translateX(-50%) scale(1); }
+  .save-btn .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+  .save-btn.loading .spinner { display: block; }
+  .save-btn.loading .btn-text { opacity: 0.7; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── 기록 목록 ── */
+  .history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .history-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .history-count {
+    font-size: 12px;
+    color: var(--ink-faint);
+    background: var(--paper3);
+    padding: 3px 9px;
+    border-radius: 12px;
+  }
+  .record-card {
+    background: var(--paper);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(44,37,32,0.06);
+  }
+  .record-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .record-time { font-size: 12px; color: var(--ink-faint); }
+  .anxiety-chip {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 12px;
+  }
+  .anxiety-low { background: var(--calm-light); color: var(--calm); }
+  .anxiety-mid { background: #fef3e2; color: #a06020; }
+  .anxiety-high { background: var(--warn-light); color: var(--warn); }
+  .record-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+  .record-tag {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: var(--paper2);
+    color: var(--ink-muted);
+    border: 1px solid var(--paper3);
+  }
+  .record-note {
+    font-size: 13px;
+    color: var(--ink-muted);
+    line-height: 1.6;
+    border-top: 1px solid var(--paper3);
+    padding-top: 8px;
+    margin-top: 4px;
+  }
+  .record-duration {
+    font-size: 11px;
+    color: var(--ink-faint);
+    margin-top: 6px;
+  }
+  .empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--ink-faint);
+    font-size: 14px;
+    line-height: 2;
+  }
+  .empty-state .big { font-size: 32px; margin-bottom: 8px; }
+
+  /* ── 토스트 ── */
+  .toast {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: var(--ink);
+    color: var(--paper);
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 13px;
+    opacity: 0;
+    transition: all 0.25s;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 100;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  .toast.success { background: var(--calm); }
+  .toast.error { background: var(--warn); }
+
+  /* ── 시트 URL 설정 안내 ── */
+  .setup-banner {
+    background: #fef3e2;
+    border: 1px solid #e8c97a;
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: #7a5c20;
+    line-height: 1.6;
+  }
+  .setup-banner strong { font-weight: 500; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- 헤더 -->
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <h1>나의 노출 일지</h1>
+        <p>지금 이 순간을 솔직하게 기록해요</p>
+      </div>
+      <div class="streak-badge" id="streak-badge">0회 기록</div>
+    </div>
+  </div>
+
+  <!-- 탭 -->
+  <div class="tabs">
+    <div class="tab active" id="tab-record" onclick="showTab('record')">기록하기</div>
+    <div class="tab" id="tab-history" onclick="showTab('history')">지난 기록</div>
+  </div>
+
+  <!-- 기록하기 탭 -->
+  <div class="scroll-area" id="view-record">
+
+    <!-- Apps Script URL 미설정 시 안내 -->
+    <div class="setup-banner" id="setup-banner" style="display:none;">
+      ⚠️ <strong>SCRIPT_URL</strong>을 설정해야 구글 시트에 저장돼요.<br>
+      <code style="font-size:11px; background:rgba(0,0,0,0.06); padding:1px 5px; border-radius:3px;">index.html</code> 상단의 <code style="font-size:11px; background:rgba(0,0,0,0.06); padding:1px 5px; border-radius:3px;">SCRIPT_URL</code> 변수를 채워주세요.
+    </div>
+
+    <!-- 타이머 -->
+    <div class="card">
+      <div class="card-label">세션 타이머</div>
+      <div class="timer-wrap">
+        <div class="timer-display" id="timer-display">00:00</div>
+        <div class="timer-btns">
+          <button class="btn-timer start" id="timer-btn" onclick="toggleTimer()">시작</button>
+          <button class="btn-timer" onclick="resetTimer()">초기화</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 불안 강도 -->
+    <div class="card">
+      <div class="card-label">불안 강도 (0 – 10)</div>
+      <div class="anxiety-row">
+        <input type="range" min="0" max="10" step="1" value="5" id="anxiety-slider"
+          oninput="updateAnxiety(this.value)">
+        <div class="anxiety-val" id="anxiety-val">5</div>
+      </div>
+      <div class="anxiety-labels"><span>전혀 없음</span><span>매우 심함</span></div>
+    </div>
+
+    <!-- 감정 -->
+    <div class="card">
+      <div class="card-label">지금 느끼는 감정</div>
+      <div class="pill-grid" id="emotions-grid">
+        <button class="pill" onclick="toggleTag(this,'emotion','불안')">😰 불안</button>
+        <button class="pill" onclick="toggleTag(this,'emotion','두려움')">😨 두려움</button>
+        <button class="pill" onclick="toggleTag(this,'emotion','긴장')">😬 긴장</button>
+        <button class="pill" onclick="toggleTag(this,'emotion','초조')">😤 초조</button>
+        <button class="pill" onclick="toggleTag(this,'emotion','답답함')">😮‍💨 답답함</button>
+        <button class="pill" onclick="toggleTag(this,'emotion','무서움')">😱 무서움</button>
+        <button class="pill" onclick="toggleTag(this,'emotion','차분함')">😌 차분함</button>
+        <button class="pill" onclick="toggleTag(this,'emotion','뿌듯함')">😊 뿌듯함</button>
+        <button class="pill" onclick="toggleTag(this,'emotion','모르겠음')">😶 모르겠음</button>
+      </div>
+    </div>
+
+    <!-- 신체 증상 -->
+    <div class="card">
+      <div class="card-label">신체 증상</div>
+      <div class="pill-grid" id="symptoms-grid">
+        <button class="pill" onclick="toggleTag(this,'symptom','심장 두근거림')">💓 심장 두근거림</button>
+        <button class="pill" onclick="toggleTag(this,'symptom','호흡 곤란')">🫁 호흡 곤란</button>
+        <button class="pill" onclick="toggleTag(this,'symptom','손발 떨림')">🫳 손발 떨림</button>
+        <button class="pill" onclick="toggleTag(this,'symptom','식은땀')">💧 식은땀</button>
+        <button class="pill" onclick="toggleTag(this,'symptom','어지러움')">🌀 어지러움</button>
+        <button class="pill" onclick="toggleTag(this,'symptom','메스꺼움')">🤢 메스꺼움</button>
+        <button class="pill" onclick="toggleTag(this,'symptom','근육 긴장')">💪 근육 긴장</button>
+        <button class="pill" onclick="toggleTag(this,'symptom','증상 없음')">✅ 증상 없음</button>
+      </div>
+    </div>
+
+    <!-- 메모 -->
+    <div class="card">
+      <div class="card-label">메모</div>
+      <textarea id="memo-text" rows="4"
+        placeholder="지금 무슨 생각이 드나요?&#10;어떤 상황인지 솔직하게 적어보세요."></textarea>
+    </div>
+
+    <div style="height: 80px;"></div>
+  </div>
+
+  <!-- 지난 기록 탭 -->
+  <div class="scroll-area" id="view-history" style="display:none;">
+    <div class="history-header">
+      <div class="history-title">기록 목록</div>
+      <div class="history-count" id="history-count">0개</div>
+    </div>
+    <div id="records-list"></div>
+  </div>
+
+  <!-- 저장 버튼 (기록 탭에서만 표시) -->
+  <button class="save-btn" id="save-btn" onclick="saveRecord()">
+    <div class="spinner"></div>
+    <span class="btn-text">기록 저장하기</span>
+  </button>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+// ─────────────────────────────────────────
+// ★ Apps Script 배포 후 여기에 URL을 붙여넣으세요 ★
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxFYOrdsXoWoPS-rUt8UgIf_jAtLkJcOrJSy9JSApMCre0am1qVGgvPU9fAbDqrwGwh4A/exec";
+// 예시: "https://script.google.com/macros/s/AKfycb.../exec"
+// ─────────────────────────────────────────
+
+let timerInterval = null;
+let timerSeconds = 0;
+let timerRunning = false;
+let selectedEmotions = [];
+let selectedSymptoms = [];
+let records = [];
+
+// ── 로컬 기록 로드 ──
+function loadRecords() {
+  try {
+    const saved = localStorage.getItem('exposure_journal');
+    if (saved) records = JSON.parse(saved);
+  } catch(e) { records = []; }
+  updateStreak();
+  renderHistory();
+}
+
+function saveLocalRecords() {
+  localStorage.setItem('exposure_journal', JSON.stringify(records));
+  updateStreak();
+}
+
+function updateStreak() {
+  document.getElementById('streak-badge').textContent = records.length + '회 기록';
+}
+
+// ── Apps Script URL 체크 ──
+function checkSetup() {
+  const banner = document.getElementById('setup-banner');
+  if (!SCRIPT_URL || SCRIPT_URL === "") {
+    banner.style.display = 'block';
+  } else {
+    banner.style.display = 'none';
+  }
+}
+
+// ── 탭 전환 ──
+function showTab(tab) {
+  const isRecord = tab === 'record';
+  document.getElementById('view-record').style.display = isRecord ? 'block' : 'none';
+  document.getElementById('view-history').style.display = isRecord ? 'none' : 'block';
+  document.getElementById('tab-record').className = 'tab' + (isRecord ? ' active' : '');
+  document.getElementById('tab-history').className = 'tab' + (!isRecord ? ' active' : '');
+  document.getElementById('save-btn').style.display = isRecord ? 'flex' : 'none';
+  if (!isRecord) renderHistory();
+}
+
+// ── 타이머 ──
+function toggleTimer() {
+  const btn = document.getElementById('timer-btn');
+  if (timerRunning) {
+    clearInterval(timerInterval);
+    timerRunning = false;
+    btn.textContent = '재개';
+    btn.className = 'btn-timer start';
+  } else {
+    timerInterval = setInterval(() => {
+      timerSeconds++;
+      const m = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
+      const s = String(timerSeconds % 60).padStart(2, '0');
+      document.getElementById('timer-display').textContent = m + ':' + s;
+    }, 1000);
+    timerRunning = true;
+    btn.textContent = '일시정지';
+    btn.className = 'btn-timer running';
+  }
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  timerSeconds = 0;
+  document.getElementById('timer-display').textContent = '00:00';
+  const btn = document.getElementById('timer-btn');
+  btn.textContent = '시작';
+  btn.className = 'btn-timer start';
+}
+
+// ── 불안 강도 색상 ──
+function updateAnxiety(val) {
+  const el = document.getElementById('anxiety-val');
+  el.textContent = val;
+  const v = parseInt(val);
+  if (v <= 3) el.style.color = '#4a7c6f';
+  else if (v <= 6) el.style.color = '#a06020';
+  else el.style.color = '#b85c38';
+}
+
+// ── 감정/증상 토글 ──
+function toggleTag(el, type, name) {
+  const cls = type === 'emotion' ? 'selected-emotion' : 'selected-symptom';
+  const arr = type === 'emotion' ? selectedEmotions : selectedSymptoms;
+  el.classList.toggle(cls);
+  const idx = arr.indexOf(name);
+  if (idx >= 0) arr.splice(idx, 1);
+  else arr.push(name);
+}
+
+// ── 저장 ──
+async function saveRecord() {
+  const btn = document.getElementById('save-btn');
+  btn.disabled = true;
+  btn.classList.add('loading');
+  btn.querySelector('.btn-text').textContent = '저장 중...';
+
+  const anxiety = parseInt(document.getElementById('anxiety-slider').value);
+  const memo = document.getElementById('memo-text').value.trim();
+  const now = new Date();
+  const time = now.toLocaleString('ko-KR', {
+    month: 'numeric', day: 'numeric',
+    hour: '2-digit', minute: '2-digit'
+  });
+
+  const record = {
+    id: Date.now(),
+    time,
+    anxiety,
+    emotions: [...selectedEmotions],
+    symptoms: [...selectedSymptoms],
+    memo,
+    timerSeconds
+  };
+
+  // 로컬 저장
+  records.unshift(record);
+  saveLocalRecords();
+
+  // 구글 시트로 전송
+  let sheetOk = false;
+  if (SCRIPT_URL && SCRIPT_URL !== "") {
+    try {
+      const res = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(record)
+      });
+      sheetOk = true;
+    } catch(e) {
+      console.error('시트 저장 실패:', e);
+    }
+  }
+
+  // 폼 초기화
+  document.getElementById('anxiety-slider').value = 5;
+  updateAnxiety(5);
+  document.querySelectorAll('.pill.selected-emotion, .pill.selected-symptom')
+    .forEach(el => el.classList.remove('selected-emotion', 'selected-symptom'));
+  document.getElementById('memo-text').value = '';
+  selectedEmotions = [];
+  selectedSymptoms = [];
+  resetTimer();
+
+  btn.disabled = false;
+  btn.classList.remove('loading');
+  btn.querySelector('.btn-text').textContent = '기록 저장하기';
+
+  if (!SCRIPT_URL || SCRIPT_URL === "") {
+    showToast('기기에만 저장됐어요 (URL 미설정)', 'error');
+  } else {
+    showToast('구글 시트에 저장됐어요 ✓', 'success');
+  }
+}
+
+// ── 토스트 ──
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + type;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── 기록 렌더링 ──
+function renderHistory() {
+  const list = document.getElementById('records-list');
+  document.getElementById('history-count').textContent = records.length + '개';
+
+  if (records.length === 0) {
+    list.innerHTML = `<div class="empty-state">
+      <div class="big">📖</div>
+      아직 기록이 없어요.<br>첫 번째 세션을 시작해보세요.
+    </div>`;
+    return;
+  }
+
+  list.innerHTML = records.map(r => {
+    const v = r.anxiety;
+    const chipCls = v <= 3 ? 'anxiety-low' : v <= 6 ? 'anxiety-mid' : 'anxiety-high';
+    const tags = [...(r.emotions||[]), ...(r.symptoms||[])]
+      .map(t => `<span class="record-tag">${t}</span>`).join('');
+    const dur = r.timerSeconds > 0
+      ? `⏱ ${Math.floor(r.timerSeconds/60)}분 ${r.timerSeconds%60}초`
+      : '';
+    return `<div class="record-card">
+      <div class="record-top">
+        <span class="record-time">${r.time}</span>
+        <span class="anxiety-chip ${chipCls}">불안 ${r.anxiety}/10</span>
+      </div>
+      ${tags ? `<div class="record-tags">${tags}</div>` : ''}
+      ${r.memo ? `<div class="record-note">${r.memo}</div>` : ''}
+      ${dur ? `<div class="record-duration">${dur}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// 초기화
+checkSetup();
+loadRecords();
+updateAnxiety(5);
+</script>
+</body>
+</html>
