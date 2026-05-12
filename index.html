@@ -838,7 +838,7 @@
           <button class="btn-timer" onclick="resetTimer()">초기화</button>
         </div>
       </div>
-      <div id="gps-inline-status" style="display:none; margin-top:8px; font-size:12px; color:var(--calm); display:flex; align-items:center; gap:5px;">
+      <div id="gps-inline-status" style="display:none; margin-top:8px; font-size:12px; color:var(--calm); align-items:center; gap:5px;">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
         <span id="gps-inline-text">GPS 추적 중</span>
       </div>
@@ -1355,7 +1355,8 @@ async function saveRecord() {
   if (!SCRIPT_URL || SCRIPT_URL === "") {
     showToast('기기에만 저장됐어요 (URL 미설정)', 'error');
   } else {
-    showToast('구글 시트에 저장됐어요 ✓', 'success');
+    const routeMsg = record.route ? ` · 경로 ${record.route.length}포인트` : '';
+    showToast(`구글 시트에 저장됐어요 ✓${routeMsg}`, 'success');
   }
 }
 
