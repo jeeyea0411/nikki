@@ -1739,11 +1739,20 @@ function getCurrentTabIdx() {
 }
 
 document.addEventListener('touchstart', function(e) {
+  const tag = e.target.tagName.toLowerCase();
+  const inCal = e.target.closest('#view-calendar');
+  const inMap = e.target.closest('#view-gps');
+  const inSlider = tag === 'input';
+  if (inSlider || inCal || inMap) {
+    touchStartX = null;
+    return;
+  }
   touchStartX = e.changedTouches[0].screenX;
   touchStartY = e.changedTouches[0].screenY;
 }, { passive: true });
 
 document.addEventListener('touchend', function(e) {
+  if (touchStartX === null) return;
   const dx = e.changedTouches[0].screenX - touchStartX;
   const dy = e.changedTouches[0].screenY - touchStartY;
 
