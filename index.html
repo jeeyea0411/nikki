@@ -397,7 +397,14 @@
     line-height: 2;
   }
   .empty-state .big { font-size: 32px; margin-bottom: 8px; }
-  .delete-record-btn {
+  .record-map {
+    width: 100%;
+    height: 160px;
+    border-radius: 8px;
+    margin-top: 8px;
+    overflow: hidden;
+    border: 1px solid var(--paper3);
+  }
     font-size: 11px;
     color: var(--ink-faint);
     cursor: pointer;
@@ -832,6 +839,10 @@
           <button class="btn-timer" onclick="resetTimer()">초기화</button>
         </div>
       </div>
+      <div id="gps-inline-status" style="display:none; margin-top:8px; font-size:12px; color:var(--calm); display:flex; align-items:center; gap:5px;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+        <span id="gps-inline-text">GPS 추적 중</span>
+      </div>
     </div>
 
     <!-- 불안 강도 -->
@@ -929,9 +940,9 @@
   </div>
 
   <!-- 경로 탭 -->
-  <div class="scroll-area" id="view-gps" style="display:none; padding: 0;">
-    <div id="gps-map" style="width:100%; height: calc(100dvh - 100px);"></div>
-    <div class="gps-controls">
+  <div class="scroll-area" id="view-gps" style="display:none; padding: 0; overflow: hidden;">
+    <div id="gps-map" style="width:100%; height: calc(100dvh - 260px); min-height: 300px;"></div>
+    <div class="gps-controls" style="position:relative; box-shadow:none; border-top: 1px solid var(--paper3); padding: 14px 16px 16px;">
       <div class="gps-status" id="gps-status">위치 대기 중</div>
       <div class="gps-stats">
         <div class="gps-stat"><div class="gps-stat-val" id="gps-points">0</div><div class="gps-stat-label">포인트</div></div>
@@ -1219,6 +1230,9 @@ function toggleTimer() {
     timerStartAt = null;
     btn.textContent = '재개';
     btn.className = 'btn-timer start';
+    // GPS 일시중지
+    if (gpsTracking) stopGps();
+    document.getElementById('gps-inline-status').style.display = 'none';
   } else {
     timerStartAt = Date.now() - timerSeconds * 1000;
     timerInterval = setInterval(() => {
@@ -1228,6 +1242,8 @@ function toggleTimer() {
     timerRunning = true;
     btn.textContent = '일시정지';
     btn.className = 'btn-timer running';
+    // GPS 자동 시작
+    startGpsBackground();
   }
 }
 
@@ -1240,6 +1256,10 @@ function resetTimer() {
   const btn = document.getElementById('timer-btn');
   btn.textContent = '시작';
   btn.className = 'btn-timer start';
+  // GPS 중지 및 경로 초기화
+  if (gpsTracking) stopGps();
+  sessionGpsPoints = [];
+  document.getElementById('gps-inline-status').style.display = 'none';
 }
 
 // 백그라운드 → 포그라운드 복귀 시 타이머 보정
@@ -1290,8 +1310,14 @@ async function saveRecord() {
     emotions: [...selectedEmotions],
     symptoms: [...selectedSymptoms],
     memo,
-    timerSeconds
+    timerSeconds,
+    route: sessionGpsPoints.length >= 2 ? [...sessionGpsPoints] : null
   };
+
+  // GPS 백그라운드 추적 종료
+  stopGpsBackground();
+  sessionGpsPoints = [];
+  document.getElementById('gps-inline-status').style.display = 'none';
 
   // 로컬 저장
   records.unshift(record);
@@ -1364,19 +1390,33 @@ function renderHistory() {
     const dur = r.timerSeconds > 0
       ? `⏱ ${Math.floor(r.timerSeconds/60)}분 ${r.timerSeconds%60}초`
       : '';
-    return `<div class="record-card">
+    return `<div class="record-card" id="rcard-${r.id}">
       <div class="record-top">
         <span class="record-time">${r.time}</span>
         <span class="anxiety-chip ${chipCls}">불안 ${r.anxiety}/10</span>
       </div>
       ${tags ? `<div class="record-tags">${tags}</div>` : ''}
       ${r.memo ? `<div class="record-note">${r.memo}</div>` : ''}
+      ${r.route ? `<div class="record-map" id="rmap-${r.id}"></div>` : ''}
       <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
         ${dur ? `<span class="record-duration" style="margin:0;">${dur}</span>` : '<span></span>'}
         <button class="delete-record-btn" onclick="deleteRecord(${r.id})">삭제</button>
       </div>
     </div>`;
   }).join('');
+
+  // 경로 있는 기록에 미니 지도 렌더링
+  records.filter(r => r.route).forEach(r => {
+    const el = document.getElementById(`rmap-${r.id}`);
+    if (!el || el.dataset.init) return;
+    el.dataset.init = '1';
+    setTimeout(() => {
+      const m = L.map(el, { zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false });
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
+      const poly = L.polyline(r.route, { color: '#4a7c6f', weight: 3 }).addTo(m);
+      m.fitBounds(poly.getBounds(), { padding: [12, 12] });
+    }, 100);
+  });
 }
 
 function deleteRecord(id) {
@@ -1508,6 +1548,8 @@ let gpsWatchId = null;
 let gpsTracking = false;
 let gpsPoints = [];
 let gpsTotalDist = 0;
+let sessionGpsPoints = []; // 현재 세션 경로 (기록 저장용)
+let sessionGpsWatchId = null;
 
 function initMap() {
   if (gpsMap) {
@@ -1597,10 +1639,58 @@ function stopGps() {
     navigator.geolocation.clearWatch(gpsWatchId);
     gpsWatchId = null;
   }
-  document.getElementById('gps-start-btn').textContent = '추적 시작';
-  document.getElementById('gps-start-btn').className = 'btn-gps-start';
-  document.getElementById('gps-status').textContent = '추적 중지됨';
-  document.getElementById('gps-status').className = 'gps-status';
+  const btn = document.getElementById('gps-start-btn');
+  if (btn) {
+    btn.textContent = '추적 시작';
+    btn.className = 'btn-gps-start';
+  }
+  const statusEl = document.getElementById('gps-status');
+  if (statusEl) {
+    statusEl.textContent = '추적 중지됨';
+    statusEl.className = 'gps-status';
+  }
+}
+
+// 타이머와 연동된 백그라운드 GPS 추적 (지도 없이)
+function startGpsBackground() {
+  if (!navigator.geolocation) return;
+  sessionGpsPoints = [];
+
+  const statusEl = document.getElementById('gps-inline-status');
+  statusEl.style.display = 'flex';
+  document.getElementById('gps-inline-text').textContent = 'GPS 추적 중...';
+
+  sessionGpsWatchId = navigator.geolocation.watchPosition(pos => {
+    const pt = [pos.coords.latitude, pos.coords.longitude];
+    sessionGpsPoints.push(pt);
+    document.getElementById('gps-inline-text').textContent =
+      `GPS 추적 중 · ${sessionGpsPoints.length}포인트`;
+
+    // 경로 탭이 열려있으면 지도에도 반영
+    if (gpsTracking && gpsPolyline) {
+      gpsPoints.push(pt);
+      gpsPolyline.setLatLngs(gpsPoints);
+      if (gpsMarker) gpsMarker.setLatLng(pt);
+      else gpsMarker = L.circleMarker(pt, {
+        radius: 8, color: '#8b5e3c', fillColor: '#8b5e3c', fillOpacity: 1, weight: 2
+      }).addTo(gpsMap);
+      gpsMap.panTo(pt);
+      document.getElementById('gps-points').textContent = gpsPoints.length;
+      const d = gpsPoints.length > 1
+        ? gpsPoints.reduce((acc, p, i) => i === 0 ? 0 : acc + haversine(gpsPoints[i-1][0], gpsPoints[i-1][1], p[0], p[1]), 0)
+        : 0;
+      document.getElementById('gps-dist').textContent = formatDist(d);
+    }
+  }, () => {
+    document.getElementById('gps-inline-text').textContent = 'GPS 사용 불가';
+  }, { enableHighAccuracy: true, maximumAge: 3000, timeout: 15000 });
+}
+
+function stopGpsBackground() {
+  if (sessionGpsWatchId !== null) {
+    navigator.geolocation.clearWatch(sessionGpsWatchId);
+    sessionGpsWatchId = null;
+  }
 }
 
 function clearGps() {
