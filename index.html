@@ -1447,8 +1447,29 @@ function toggleBreath() {
   if (breathRunning) {
     pauseBreath();
   } else {
-    startBreath();
+    startBreathCountdown();
   }
+}
+
+function startBreathCountdown() {
+  const btn = document.getElementById('breath-start-btn');
+  btn.disabled = true;
+  btn.textContent = '준비 중...';
+
+  let count = 3;
+  document.getElementById('breath-phase').textContent = '준비';
+  document.getElementById('breath-count').textContent = count;
+
+  const cd = setInterval(() => {
+    count--;
+    if (count > 0) {
+      document.getElementById('breath-count').textContent = count;
+    } else {
+      clearInterval(cd);
+      btn.disabled = false;
+      startBreath();
+    }
+  }, 1000);
 }
 
 function startBreath() {
