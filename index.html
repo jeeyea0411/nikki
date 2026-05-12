@@ -404,17 +404,60 @@
     overflow: hidden;
     border: 1px solid var(--paper3);
   }
-    font-size: 11px;
-    color: var(--ink-faint);
-    cursor: pointer;
-    padding: 3px 10px;
-    border-radius: 6px;
+  .delete-record-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px; height: 28px;
+    border-radius: 8px;
     border: 1px solid var(--paper3);
     background: var(--paper2);
-    font-family: 'Noto Sans KR', sans-serif;
+    color: var(--ink-faint);
+    cursor: pointer;
     transition: all 0.15s;
+    flex-shrink: 0;
   }
-  .delete-record-btn:active { transform: scale(0.95); background: var(--warn-light); color: var(--warn); border-color: var(--warn); }
+  .delete-record-btn:active { background: var(--warn-light); color: var(--warn); border-color: var(--warn); transform: scale(0.93); }
+
+  /* ── 커스텀 모달 ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(44,37,32,0.45);
+    z-index: 200;
+    display: flex; align-items: flex-end; justify-content: center;
+    padding-bottom: env(safe-area-inset-bottom);
+    opacity: 0; transition: opacity 0.2s;
+    pointer-events: none;
+  }
+  .modal-overlay.show { opacity: 1; pointer-events: all; }
+  .modal-sheet {
+    background: var(--paper);
+    border-radius: 20px 20px 0 0;
+    padding: 24px 20px 32px;
+    width: 100%; max-width: 430px;
+    transform: translateY(20px);
+    transition: transform 0.25s cubic-bezier(.32,1,.23,1);
+  }
+  .modal-overlay.show .modal-sheet { transform: translateY(0); }
+  .modal-title { font-family: 'Noto Serif KR', serif; font-size: 16px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
+  .modal-desc { font-size: 13px; color: var(--ink-muted); line-height: 1.6; margin-bottom: 20px; }
+  .modal-btns { display: flex; gap: 8px; }
+  .modal-btn-cancel {
+    flex: 1; padding: 13px;
+    background: var(--paper2); color: var(--ink-muted);
+    border: 1px solid var(--paper3); border-radius: var(--radius-sm);
+    font-size: 14px; font-family: 'Noto Sans KR', sans-serif;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .modal-btn-confirm {
+    flex: 1; padding: 13px;
+    background: var(--warn-light); color: var(--warn);
+    border: 1px solid var(--warn); border-radius: var(--radius-sm);
+    font-size: 14px; font-weight: 500; font-family: 'Noto Sans KR', sans-serif;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .modal-btn-cancel:active { transform: scale(0.97); }
+  .modal-btn-confirm:active { transform: scale(0.97); background: var(--warn); color: white; }
 
   /* ── GPS ── */
   .gps-controls {
@@ -995,6 +1038,18 @@
     <span class="btn-text">기록 저장하기</span>
   </button>
 
+  <!-- 커스텀 삭제 모달 -->
+  <div class="modal-overlay" id="delete-modal">
+    <div class="modal-sheet">
+      <div class="modal-title">기록을 삭제할까요?</div>
+      <div class="modal-desc">삭제한 기록은 복구할 수 없어요.</div>
+      <div class="modal-btns">
+        <button class="modal-btn-cancel" onclick="closeDeleteModal()">취소</button>
+        <button class="modal-btn-confirm" onclick="confirmDelete()">삭제</button>
+      </div>
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 </div>
 
@@ -1400,7 +1455,9 @@ function renderHistory() {
       ${r.route ? `<div class="record-map" id="rmap-${r.id}"></div>` : ''}
       <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
         ${dur ? `<span class="record-duration" style="margin:0;">${dur}</span>` : '<span></span>'}
-        <button class="delete-record-btn" onclick="deleteRecord(${r.id})">삭제</button>
+        <button class="delete-record-btn" onclick="deleteRecord(${r.id})">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+        </button>
       </div>
     </div>`;
   }).join('');
@@ -1420,11 +1477,25 @@ function renderHistory() {
   });
 }
 
+let pendingDeleteId = null;
+
 function deleteRecord(id) {
-  if (!confirm('이 기록을 삭제할까요?')) return;
-  records = records.filter(r => r.id !== id);
+  pendingDeleteId = id;
+  const modal = document.getElementById('delete-modal');
+  modal.classList.add('show');
+}
+
+function closeDeleteModal() {
+  pendingDeleteId = null;
+  document.getElementById('delete-modal').classList.remove('show');
+}
+
+function confirmDelete() {
+  if (pendingDeleteId === null) return;
+  records = records.filter(r => r.id !== pendingDeleteId);
   saveLocalRecords();
   renderHistory();
+  closeDeleteModal();
   showToast('기록이 삭제됐어요', '');
 }
 
