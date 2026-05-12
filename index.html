@@ -1575,8 +1575,8 @@ let sessionGpsWatchId = null;
 function initMap() {
   if (gpsMap) return;
   const mapDiv = document.getElementById('gps-map');
+  mapDiv.style.visibility = 'hidden';
 
-  // 위치 먼저 받아온 다음 지도 초기화
   const statusEl = document.getElementById('gps-status');
   statusEl.textContent = '현재 위치 확인 중...';
 
@@ -1587,7 +1587,6 @@ function initMap() {
       mapTypeId: naver.maps.MapTypeId.NORMAL
     });
 
-    // 현재 위치 마커 (파란 점)
     new naver.maps.Marker({
       position: new naver.maps.LatLng(lat, lng),
       map: gpsMap,
@@ -1605,6 +1604,7 @@ function initMap() {
       strokeOpacity: 0.85
     });
 
+    mapDiv.style.visibility = 'visible';
     statusEl.textContent = '위치 대기 중';
     statusEl.className = 'gps-status';
   };
